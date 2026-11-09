@@ -1,0 +1,36 @@
+name: Build PDF Reader APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Extract project
+        run: |
+          unzip -o PDFReader-Android-Project.zip
+
+      - name: Build APK
+        run: |
+          cd PDFReader
+          gradle assembleDebug
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PDF-Reader-APK
+          path: PDFReader/app/build/outputs/apk/debug/app-debug.apk
